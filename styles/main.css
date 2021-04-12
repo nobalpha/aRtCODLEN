@@ -1,0 +1,62 @@
+
+.data {
+    position: sticky !important;
+	width: 250px;
+	height: 300px;
+	top: -290px !important;
+	display: inline !important;
+	margin-left: 5%;
+	margin-right: 3%;
+
+}
+
+button {
+	position: absolute;
+	background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 10px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+	bottom: 0px;
+}
+
+#start {
+	left: 0px;
+}
+
+#stop {
+	left: 170px;
+}
+#selector {
+    position: absolute;
+    top: -800px;
+	z-index: 1;
+}
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+html {
+    font-size: 13px;
+}
+body {
+    font-family: "Open Sans", sans-serif;
+    font-size: 1em;
+    line-height: 1.6;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+input {
+	position: absolute;
+	z-index: 1;
+	top: 100px;
+	left: 100px;
+	width: 100px;
+	height: 100px;
+/*
+}
