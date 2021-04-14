@@ -4,7 +4,7 @@ const energy_per_particle = document.getElementById("energy_particle").getContex
 let energy_particle_data = {
     datasets: [
         {
-            label: "Particle's Energy",
+            label: "Energy (GeV) per Particle",
             data: [],
             borderColor: "rgb(255, 0, 125)",
             backgroundColor: "rgb(255, 0, 125)",
@@ -23,7 +23,7 @@ const energy_particle_config = {
             },
             title: {
                 display: true,
-                text: 'Chart.js Line Chart'
+                text: ''
             }
         }
     },
@@ -41,7 +41,7 @@ const energy_frequency = document.getElementById("energy_frequency").getContext(
 let energy_frequency_data = {
     datasets: [
         {
-            label: "Energy & Frequency",
+            label: "Energy (GeV) - Frequency (ZHz)",
             data: [],
             borderColor: "rgb(255, 0, 125)",
             backgroundColor: "rgb(255, 0, 125)",
@@ -60,7 +60,7 @@ const energy_frequency_config = {
             },
             title: {
                 display: true,
-                text: 'Chart.js Line Chart'
+                text: ''
             }
         }
     },
@@ -77,7 +77,7 @@ const energy_wavelength = document.getElementById("energy_wavelength").getContex
 let energy_wavelength_data = {
     datasets: [
         {
-            label: "Energy & Wavelength",
+            label: "Energy (J) - Wavelength (fm)",
             data: [],
             borderColor: "rgb(255, 0, 125)",
             backgroundColor: "rgb(255, 0, 125)",
@@ -96,7 +96,7 @@ const energy_wavelength_config = {
             },
             title: {
                 display: true,
-                text: 'Chart.js Line Chart'
+                text: ''
             }
         }
     },
@@ -113,7 +113,7 @@ const frequency_wavelength = document.getElementById("frequency_wavelength").get
 let frequency_wavelength_data = {
     datasets: [
         {
-            label: "Frequency & Wavelength",
+            label: "Frequency (ZHz) - Wavelength (fm)",
             data: [],
             borderColor: "rgb(255, 0, 125)",
             backgroundColor: "rgb(255, 0, 125)",
@@ -132,7 +132,7 @@ const frequency_wavelength_config = {
             },
             title: {
                 display: true,
-                text: 'Chart.js Line Chart'
+                text: ''
             }
         }
     },
