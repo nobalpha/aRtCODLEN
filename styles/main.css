@@ -1,7 +1,7 @@
 
 .data {
     position: sticky !important;
-	width: 250px;
+	width: 450px;
 	height: 300px;
 	top: -290px !important;
 	display: inline !important;
@@ -23,6 +23,10 @@ button {
 	bottom: 0px;
 }
 
+#stop {
+	background-color: #F30000;
+}
+
 #start {
 	left: 0px;
 }
@@ -30,6 +34,14 @@ button {
 #stop {
 	left: 170px;
 }
+
+#info {
+	position: absolute;
+	bottom: 0px;
+	left: 50%;
+	color: white;
+}
+
 #selector {
     position: absolute;
     top: -800px;

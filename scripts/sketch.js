@@ -1,93 +1,142 @@
 // TODO : REFACTOR !
 // INTERFACE STYLIZE
-const MAX_ANGLE = 360;
+// FUNCTIONS SEPERATION +
+// CHART LEGEND 
+// Commenting
 
-let A, f_i, f_red, red_index, r, x, y, z, n_side, n_shape, offset, strum, padding, s_w, A_sh_factor, y_min, y_max, y_delta, started;
 
-A = 140; // 1000
-A_sh_factor = 4;
-red_index = 15;
-s_w = 4
-f_i = Math.random() * 14000 + 200;
-dummy = Math.random() * 255;
-f_red = f_i % red_index;
-n_side = 160;
-n_shape = A / A_sh_factor;
-offset = 0;
-strum = 100;
-padding = 200;
-y_min = 100;
-y_max = 650;
-y_delta = y_max - y_min;
+// Welcome to the backbone of the application! 
+// Do not try what you will see now at home!
+// And also, I'm sorry for this mess :|
+
+let Amplitude, r, x, y, z, n_side, n_shape, offset, strum, padding, stroke_weight, Amplitude_Shape_factor, y_min, y_max, y_delta, started, random_energy_in_joules, pure_frequency_in_petahertz, min_pure_frequency_in_petahertz, max_pure_frequency_in_petahertz, reducted_frequency_in_hz, color, parsed_color, pure_wavelength_in_fermometers,min_pure_wavelength_in_fermometers, max_pure_wavelength_in_fermometers, particle_count;
 
 started = false;
 
-console.log(`The normal scale is ${1 + ((f_i - f_red) / f_red)} time bigger than the representation.`);
+// Shape Wave Parameters
+
+Amplitude = 140;
+Amplitude_Shape_factor = 4; // Amplitude-Shape Factor
+stroke_weight = 4
+n_side = Math.random() * 30 + 3; // Number of side
+n_shape = Amplitude / Amplitude_Shape_factor; // Number of shape instance
+offset = 0;
+
+// Surface Wave Parameters
+
+padding = 200;
+strum = Amplitude; // Valley - Peak
+
+// Surface Wave Ordinates
+
+y_min = 100; 
+y_max = 650;
+y_delta = y_max - y_min;
+
+// Constants
+
+const GeV_constant = 1.602176487 * 10 ** (-10); // Based on Joules
+const fm_constant = 10 ** 15; // Based on meters
+const Zs_constant = 10 ** (-21); // Based on seconds
+const Gs_constant = 10 ** (-9); // Based on seconds
+const kHz_constant = 10 ** 3; // Based on Hz
+const min_energy_in_GeV = 1;
+const max_energy_in_GeV = 6;
+const min_energy_in_joules = min_energy_in_GeV * GeV_constant;
+const max_energy_in_joules = max_energy_in_GeV * GeV_constant;
+const planck_constant_in_joules = 6.62607004 * 10**(-34);
+const speed_of_light_in_meters = 299792458;
+const min_hearable_hz = 22;
+const max_hearable_hz = 17 * kHz_constant; // A little padding to be able to hear it :D
+const min_visible_nm = 400;
+const max_visible_nm = 700;
+const data_constant = 10 ** 12;
+const available_charts = [energy_particle_data, energy_frequency_data, energy_wavelength_data, frequency_wavelength_data];
+const MAX_ANGLE = 360;
+
+
+// Initiator Values
+
+reducted_frequency_in_hz = 2000;
+started = false;
+color = "rgb(255, 0, 125)";
+particle_count = 0;
 
 
 function setup() {
+	
     createCanvas(innerWidth, innerHeight * 3 / 4, WEBGL);
 
     angleMode(DEGREES);
-    document.body.style.backgroundColor = "rgb(30, 30, 30)";
+	
+    document.body.style.backgroundColor = "rgb(30, 30, 30)"; 
 
     noLoop();
+	
 
-    const start = document.querySelector("#start");
+    const context = new(window.AudioContext || window.webkitAudioContext)();
 
-    start.addEventListener("click", async () => {
+    const start_button = document.querySelector("#start");
+	const stop_button = document.querySelector("#stop");
+
+    start_button.addEventListener("click", async () => { // As the Autoplay policy has been changed, we needed to create a trigger event.
+	
         loop();
+		
         started = true;
 
-        console.log("aye");
-
-        // for (let i = 0; i <= 15; i++) {
         while (started) {
-            let random = Math.random() * 10000 + 200;
-            // let t1 = performance.now()
-            await oscillatorPromise(context, random, 0.1);
-            // console.log(performance.now() - t1);
-            console.log("hey0");
+			
+            await oscillatorPromise(context, reducted_frequency_in_hz, 0.1); // Using an asynchronous function to avoid wave superpositions.
         }
 
     });
 
-    const stop = document.querySelector("#stop");
-
-    stop.addEventListener("click", () => {
+    stop_button.addEventListener("click", () => { // It helps a lot...
+		
         noLoop();
+		
         started = false;
     });
 
-
-
-    const context = new(window.AudioContext || window.webkitAudioContext)();
-
-
-
-    started = false;
 }
 
 function draw() {
+	
+    if (!(frameCount % 30)) { // For every 30 frames per second,
+		
+		n_side = Math.random() * 30 + 3; // Change the form of shape.
+		
+		particle_count++; // Getting new particles in the simulation.
+		
+		random_energy_in_joules = generate_random_energy_in_joules(); // In the real experiment, it'll be replaced by the *REAL* data.
+		
+		[min_pure_frequency_in_petahertz, max_pure_frequency_in_petahertz, pure_frequency_in_petahertz] = calculate_frequency_in_petahertz(random_energy_in_joules);
+		
+		reducted_frequency_in_hz = reduction_of_pure_frequency_to_human_hearing_range(pure_frequency_in_petahertz);
+		
+		[min_pure_wavelength_in_fermometers, max_pure_wavelength_in_fermometers, pure_wavelength_in_fermometers] = calculate_wavelength_in_nanometers(pure_frequency_in_petahertz);
+		
+		reducted_wavelength_in_nanometers = reduction_of_pure_wavelength_to_visible_range(pure_wavelength_in_fermometers);
+		
+		console.log(reducted_wavelength_in_nanometers);
+		
+		color = wavelength_to_rgb(reducted_wavelength_in_nanometers);
+		
+		parsed_color = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+		
+		for (let i = 0; i < available_charts.length; i++) {
+			colorizeChart(available_charts[i], parsed_color); // Updating chart data colors.
+		}
+		
+		console.log(random_energy_in_joules / GeV_constant);
 
-
-    /*if (started) {
-        
-
-
-
-    }*/
-
-    if (!(frameCount % 60)) {
-        f_i = Math.random() * 14000 + 200;
-        dummy = Math.random() * 255;
-
-        f_red = f_i % red_index;
-        console.log("hye");
-        addData(energy_particle_line_chart, 1, f_i);
-        addData(energy_frequency_line_chart, f_i, 3000);
-        addData(energy_wavelength_line_chart, 5, 3000);
-        addData(frequency_wavelength_line_chart, 5, f_i);
+        addData(energy_particle_line_chart, particle_count, (random_energy_in_joules / GeV_constant).toFixed(2) );
+        addData(energy_frequency_line_chart, pure_frequency_in_petahertz.toFixed(2), (random_energy_in_joules / GeV_constant).toFixed(2));
+        addData(energy_wavelength_line_chart, pure_wavelength_in_fermometers.toFixed(2), (random_energy_in_joules / GeV_constant).toFixed(2));
+        addData(frequency_wavelength_line_chart, pure_wavelength_in_fermometers.toFixed(2), pure_frequency_in_petahertz.toFixed(2));
+		
+		document.getElementById("info").innerHTML = `The normal scale is ${parseFloat(1 + ((pure_frequency_in_petahertz / Zs_constant - reducted_frequency_in_hz) / reducted_frequency_in_hz)).toExponential()} time bigger than the representation.`;
     }
 
     background("rgba(0, 0, 0, 0)");
@@ -95,29 +144,32 @@ function draw() {
     rotateX(60);
 
     noFill();
-    stroke(255, 0, 125);
+    stroke(color);
+	
+	document.querySelectorAll("button").forEach( el => {
+		el.style.backgroundColor = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+	})
 
     strokeWeight(1);
 
-    oscillatorGrapher(f_i, strum, y_min, y_max);
+    oscillatorGrapher(reducted_frequency_in_hz, strum, y_min, y_max);
 
     for (let i = 1; i <= 5; i++) {
-        oscillatorGrapher(f_i, strum, y_min - y_delta * i, y_max - y_delta * i);
+        oscillatorGrapher(reducted_frequency_in_hz, strum, y_min - y_delta * i, y_max - y_delta * i);
     }
 
 
-    strokeWeight(s_w)
+    strokeWeight(stroke_weight)
 
     for (let i = 0; i < n_shape; i++) {
-        stroke(dummy, dummy, dummy);
 
         beginShape();
         for (let j = MAX_ANGLE; j > 0; j -= MAX_ANGLE / n_side) {
-            r = i * A / n_shape;
+            r = i * Amplitude / n_shape;
             x = r * cos(j);
             y = r * sin(j) - padding;
 
-            z = A * sin(f_red * frameCount + i * 5);
+            z = Amplitude * sin(reducted_frequency_in_hz * frameCount + i * 5);
             vertex(x, y, z);
 
         }
@@ -126,67 +178,3 @@ function draw() {
     }
 }
 
-
-function windowResized() {
-    resizeCanvas(innerWidth, innerHeight * 3 / 4);
-}
-
-function oscillatorGrapher(f_i, strum, y_min, y_max) {
-
-    beginShape();
-
-    for (let x = -innerWidth; x < innerWidth; x += 3) {
-        let new_x = map(x, 0, innerWidth, 0, TWO_PI);
-        let angle = atan(A * sin(f_i * (new_x)));
-        let y = map(angle, -strum, strum, y_min, y_max);
-
-
-        vertex(x, y);
-    }
-    endShape();
-}
-
-function oscillatorPromise(context, f_i, duration) {
-    return new Promise((resolve, reject) => {
-
-        const oscillator = context.createOscillator();
-
-        oscillator.type = 'sine';
-        oscillator.frequency.value = f_i;
-        let now = context.currentTime;
-        oscillator.start(now);
-        oscillator.connect(context.destination);
-        console.log(now);
-
-        oscillator.stop(now + duration);
-        oscillator.onended = () => {
-            oscillator.disconnect(context.destination);
-            resolve();
-
-        };
-
-    });
-}
-
-/*const REAL_TIME_FREQUENCY = 800;
-    const ANGULAR_FREQUENCY = REAL_TIME_FREQUENCY * 2 * Math.PI;
-
-    let audioContext = new AudioContext();
-    let myBuffer = audioContext.createBuffer(1, f_i * 2 / 5, f_i * 2);
-    let myArray = myBuffer.getChannelData(0);
-    for (let sampleNumber = 0 ; sampleNumber < 88200 ; sampleNumber++) {
-        myArray[sampleNumber] = generateSample(sampleNumber);
-    }
-
-    function generateSample(sampleNumber) {
-        let sampleTime = sampleNumber / 44100;
-        let sampleAngle = sampleTime * ANGULAR_FREQUENCY;
-        return Math.sin(sampleAngle);
-    }
-
-    let src = audioContext.createBufferSource();
-    src.buffer = myBuffer;
-    src.connect(audioContext.destination);
-    src.start();
-	
-*/

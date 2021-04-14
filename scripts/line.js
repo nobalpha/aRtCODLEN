@@ -6,8 +6,8 @@ let energy_particle_data = {
         {
             label: "Particle's Energy",
             data: [],
-            borderColor: "red",
-            backgroundColor: "black",
+            borderColor: "rgb(255, 0, 125)",
+            backgroundColor: "rgb(255, 0, 125)",
         }
     ]
 };
@@ -43,8 +43,8 @@ let energy_frequency_data = {
         {
             label: "Energy & Frequency",
             data: [],
-            borderColor: "red",
-            backgroundColor: "black",
+            borderColor: "rgb(255, 0, 125)",
+            backgroundColor: "rgb(255, 0, 125)",
         }
     ]
 };
@@ -79,8 +79,8 @@ let energy_wavelength_data = {
         {
             label: "Energy & Wavelength",
             data: [],
-            borderColor: "red",
-            backgroundColor: "black",
+            borderColor: "rgb(255, 0, 125)",
+            backgroundColor: "rgb(255, 0, 125)",
         }
     ]
 };
@@ -115,8 +115,8 @@ let frequency_wavelength_data = {
         {
             label: "Frequency & Wavelength",
             data: [],
-            borderColor: "red",
-            backgroundColor: "black",
+            borderColor: "rgb(255, 0, 125)",
+            backgroundColor: "rgb(255, 0, 125)",
         }
     ]
 };
@@ -141,19 +141,16 @@ const frequency_wavelength_config = {
 
 const frequency_wavelength_line_chart = new Chart(frequency_wavelength, frequency_wavelength_config);
 
-
-
-
-
-
-addData(frequency_wavelength_line_chart, 15, 20); 
-
-
-
 function addData(chart, label, data) {
+	
     chart.data.labels.push(label);
     chart.data.datasets.forEach((dataset) => {
         dataset.data.push(data);
     });
     chart.update();
+}
+
+function colorizeChart(data, color_in_rgb) {
+	data.datasets[0].backgroundColor = color_in_rgb;
+	data.datasets[0].borderColor = color_in_rgb;
 }
