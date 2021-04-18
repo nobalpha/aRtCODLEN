@@ -1,8 +1,8 @@
-function windowResized() {
+function windowResized() { // Resizing the window dynamically.
     resizeCanvas(innerWidth, innerHeight * 3 / 4);
 }
 
-function oscillatorGrapher(f_i, strum, y_min, y_max) {
+function oscillatorGrapher(f_i, strum, y_min, y_max) { // Generating the sine wave on the floor.
 
     beginShape();
 
@@ -17,7 +17,7 @@ function oscillatorGrapher(f_i, strum, y_min, y_max) {
     endShape();
 }
 
-function oscillatorPromise(context, f_i, duration) {
+function oscillatorPromise(context, f_i, duration) { // Creating a synchronous sound buffer to avoid superpositioned waves to be produced.
     return new Promise((resolve, reject) => {
 
         const oscillator = context.createOscillator();
@@ -38,100 +38,102 @@ function oscillatorPromise(context, f_i, duration) {
     });
 }
 
-function generate_random_energy_in_joules() {
-	random_energy_in_joules = (Math.random() * parseInt( (max_energy_in_joules - min_energy_in_joules) * GeV_constant ** (-2) ) + parseInt(min_energy_in_joules * GeV_constant ** (-2))) * GeV_constant ** (2);
-	
-	return random_energy_in_joules;
+function generate_random_energy_in_joules() { // Using Joules metric to have a greater random_int range and to avoid floating point logic.
+    random_energy_in_joules = (Math.random() * parseInt((max_energy_in_joules - min_energy_in_joules) * GeV_constant ** (-2)) + parseInt(min_energy_in_joules * GeV_constant ** (-2))) * GeV_constant ** (2);
+
+    return random_energy_in_joules;
 }
 
-function calculate_frequency_in_petahertz(random_energy_in_joules) {
-	min_pure_frequency_in_petahertz = min_energy_in_joules / planck_constant_in_joules * Zs_constant;
-    max_pure_frequency_in_petahertz = max_energy_in_joules / planck_constant_in_joules * Zs_constant;
-    pure_frequency_in_petahertz = random_energy_in_joules / planck_constant_in_joules * Zs_constant;
-	
+function calculate_frequency_in_petahertz(random_energy_in_joules) { // E = hv
+    min_pure_frequency_in_petahertz = min_energy_in_joules / planck_constant_in_joules * Ps_constant;
+    max_pure_frequency_in_petahertz = max_energy_in_joules / planck_constant_in_joules * Ps_constant;
+    pure_frequency_in_petahertz = random_energy_in_joules / planck_constant_in_joules * Ps_constant;
+
     return [min_pure_frequency_in_petahertz, max_pure_frequency_in_petahertz, pure_frequency_in_petahertz];
 }
 
-function calculate_wavelength_in_nanometers(pure_frequency_in_petahertz) {
-	min_pure_wavelength_in_fermometers = speed_of_light_in_meters / min_pure_frequency_in_petahertz * fm_constant * Zs_constant;
-    max_pure_wavelength_in_fermometers = speed_of_light_in_meters / max_pure_frequency_in_petahertz * fm_constant * Zs_constant;
-    pure_wavelength_in_fermometers = speed_of_light_in_meters / pure_frequency_in_petahertz * fm_constant * Zs_constant;
-	
+function calculate_wavelength_in_nanometers(pure_frequency_in_petahertz) { // c = vλ
+    // Due to the decrease of wavelength by energy, it's obligatory to rotate the range by chaning min and max.
+    min_pure_wavelength_in_fermometers = speed_of_light_in_meters / max_pure_frequency_in_petahertz * fm_constant * Ps_constant;
+    max_pure_wavelength_in_fermometers = speed_of_light_in_meters / min_pure_frequency_in_petahertz * fm_constant * Ps_constant;
+    pure_wavelength_in_fermometers = speed_of_light_in_meters / pure_frequency_in_petahertz * fm_constant * Ps_constant;
+
     return [min_pure_wavelength_in_fermometers, max_pure_wavelength_in_fermometers, pure_wavelength_in_fermometers];
 }
 
-function reduction_of_pure_frequency_to_human_hearing_range(pure_frequency_in_petahertz) {
-	reducted_frequency_in_hz = ( (max_hearable_hz - min_hearable_hz) * (pure_frequency_in_petahertz - min_pure_frequency_in_petahertz) + min_hearable_hz * (max_pure_frequency_in_petahertz - min_pure_frequency_in_petahertz) ) / (max_pure_frequency_in_petahertz - min_pure_frequency_in_petahertz);
-    
-	return reducted_frequency_in_hz;
+function reduction_of_pure_frequency_to_human_hearing_range(pure_frequency_in_petahertz) { // (max_hearable_hz - min_hearable_hz) / (reducted_frequency_in_hz - min_hearable_hz) = (max_pure_frequency_in_petahertz - min_pure_frequency_in_petahertz) / (pure_frequency_in_petahertz - min_pure_frequency_in_petahertz)
+
+    reducted_frequency_in_hz = ((max_hearable_hz - min_hearable_hz) * (pure_frequency_in_petahertz - min_pure_frequency_in_petahertz) + min_hearable_hz * (max_pure_frequency_in_petahertz - min_pure_frequency_in_petahertz)) / (max_pure_frequency_in_petahertz - min_pure_frequency_in_petahertz);
+
+    return reducted_frequency_in_hz;
 }
 
-function reduction_of_pure_wavelength_to_visible_range(pure_wavelength_in_fermometers) {
-	
-	reducted_wavelength_in_nanometers = ( (max_visible_nm - min_visible_nm) * (pure_wavelength_in_fermometers - min_pure_wavelength_in_fermometers) + min_visible_nm * (max_pure_wavelength_in_fermometers - min_pure_wavelength_in_fermometers) ) / (max_pure_wavelength_in_fermometers - min_pure_wavelength_in_fermometers);
-    
-	return reducted_wavelength_in_nanometers;
+function reduction_of_pure_wavelength_to_visible_range(pure_wavelength_in_fermometers) { // (max_visible_nm - min_visible_nm) / (reducted_wavelength_in_fermometers - min_visible_nm) = (max_pure_wavelength_in_fermometers - min_pure_wavelength_in_fermometers) / (pure_wavelength_in_fermometers- min_pure_wavelength_in_fermometers)
+
+    reducted_wavelength_in_nanometers = ((max_visible_nm - min_visible_nm) * (pure_wavelength_in_fermometers - min_pure_wavelength_in_fermometers) + min_visible_nm * (max_pure_wavelength_in_fermometers - min_pure_wavelength_in_fermometers)) / (max_pure_wavelength_in_fermometers - min_pure_wavelength_in_fermometers);
+
+    return (reducted_wavelength_in_nanometers);
 }
 
 // Code from Academo which is the most convenient snippet for now...
 // https://academo.org/demos/wavelength-to-colour-relationship/
 // https://codepen.io/pen/?&editors=011&prefill_data_id=1841f63c-f89a-41b5-8399-0160ad1584de
 
-function wavelength_to_rgb(wavelength){
-        let Gamma = 0.80,
+function wavelength_to_rgb(wavelength) {
+    let Gamma = 0.80,
         IntensityMax = 255,
         factor, red, green, blue;
-        if((wavelength >= 380) && (wavelength<440)){
-            red = -(wavelength - 440) / (440 - 380);
-            green = 0.0;
-            blue = 1.0;
-        }else if((wavelength >= 440) && (wavelength<490)){
-            red = 0.0;
-            green = (wavelength - 440) / (490 - 440);
-            blue = 1.0;
-        }else if((wavelength >= 490) && (wavelength<510)){
-            red = 0.0;
-            green = 1.0;
-            blue = -(wavelength - 510) / (510 - 490);
-        }else if((wavelength >= 510) && (wavelength<580)){
-            red = (wavelength - 510) / (580 - 510);
-            green = 1.0;
-            blue = 0.0;
-        }else if((wavelength >= 580) && (wavelength<645)){
-            red = 1.0;
-            green = -(wavelength - 645) / (645 - 580);
-            blue = 0.0;
-        }else if((wavelength >= 645) && (wavelength<781)){
-            red = 1.0;
-            green = 0.0;
-            blue = 0.0;
-        }else{
-            red = 0.0;
-            green = 0.0;
-            blue = 0.0;
-        };
-        // Let the intensity fall off near the vision limits
-        if((wavelength >= 380) && (wavelength<420)){
-            factor = 0.3 + 0.7*(wavelength - 380) / (420 - 380);
-        }else if((wavelength >= 420) && (wavelength<701)){
-            factor = 1.0;
-        }else if((wavelength >= 701) && (wavelength<781)){
-            factor = 0.3 + 0.7*(780 - wavelength) / (780 - 700);
-        }else{
-            factor = 0.0;
-        };
-        if (red !== 0){
-            red = Math.round(IntensityMax * Math.pow(red * factor, Gamma));
-        }
-        if (green !== 0){
-            green = Math.round(IntensityMax * Math.pow(green * factor, Gamma));
-        }
-        if (blue !== 0){
-            blue = Math.round(IntensityMax * Math.pow(blue * factor, Gamma));
-        }
-        return [red,green,blue];
+    if ((wavelength >= 380) && (wavelength < 440)) {
+        red = -(wavelength - 440) / (440 - 380);
+        green = 0.0;
+        blue = 1.0;
+    } else if ((wavelength >= 440) && (wavelength < 490)) {
+        red = 0.0;
+        green = (wavelength - 440) / (490 - 440);
+        blue = 1.0;
+    } else if ((wavelength >= 490) && (wavelength < 510)) {
+        red = 0.0;
+        green = 1.0;
+        blue = -(wavelength - 510) / (510 - 490);
+    } else if ((wavelength >= 510) && (wavelength < 580)) {
+        red = (wavelength - 510) / (580 - 510);
+        green = 1.0;
+        blue = 0.0;
+    } else if ((wavelength >= 580) && (wavelength < 645)) {
+        red = 1.0;
+        green = -(wavelength - 645) / (645 - 580);
+        blue = 0.0;
+    } else if ((wavelength >= 645) && (wavelength < 781)) {
+        red = 1.0;
+        green = 0.0;
+        blue = 0.0;
+    } else {
+        red = 0.0;
+        green = 0.0;
+        blue = 0.0;
+    };
+    // Let the intensity fall off near the vision limits
+    if ((wavelength >= 380) && (wavelength < 420)) {
+        factor = 0.3 + 0.7 * (wavelength - 380) / (420 - 380);
+    } else if ((wavelength >= 420) && (wavelength < 701)) {
+        factor = 1.0;
+    } else if ((wavelength >= 701) && (wavelength < 781)) {
+        factor = 0.3 + 0.7 * (780 - wavelength) / (780 - 700);
+    } else {
+        factor = 0.0;
+    };
+    if (red !== 0) {
+        red = Math.round(IntensityMax * Math.pow(red * factor, Gamma));
     }
-	
+    if (green !== 0) {
+        green = Math.round(IntensityMax * Math.pow(green * factor, Gamma));
+    }
+    if (blue !== 0) {
+        blue = Math.round(IntensityMax * Math.pow(blue * factor, Gamma));
+    }
+    return [red, green, blue];
+}
+
 // Storage
 
 /*
