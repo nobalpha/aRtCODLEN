@@ -1,9 +1,5 @@
-// TODO : REFACTOR !
-// INTERFACE STYLIZE
-// FUNCTIONS SEPERATION +
-// CHART LEGEND 
-// Commenting
-
+// GitHub Repository Link:
+// https://github.com/nobalpha/aRtCODLEN
 
 // Welcome to the backbone of the application! 
 // Do not try what you will see now at home!
